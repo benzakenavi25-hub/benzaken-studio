@@ -486,3 +486,6 @@ html.o3d .pl-word + .pl-word { animation-delay: .91s; }
 @keyframes pl-fill { to { fill-opacity: 1; } }
 @keyframes pl-sweep { to { clip-path: inset(0 0 0 0); } }
 @keyframes pl-up { to { opacity: 1; transform: none; } }
+
+/* return visits: the preloader played once already, so the hero shows right away */
+html.pl-skip .preloader { display: none; }

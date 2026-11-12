@@ -61,8 +61,14 @@ export function initMotion({ orbit } = {}) {
       .to('#heroHint', { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 0.9);
   };
 
+  // the full preloader plays on the first visit only; return visits go straight to the hero intro
+  const markSeen = () => { try { localStorage.setItem('bz-seen', '1'); } catch (_) {} };
   const runPreloader = () => {
-    if (!preloader) { orbit && orbit.intro(); heroIntro(); return; }
+    if (!preloader || document.documentElement.classList.contains('pl-skip')) {
+      if (preloader) preloader.classList.add('is-done');
+      orbit && orbit.intro(); heroIntro();
+      return;
+    }
     if (reduce) {
       gsap.to(preloader, { autoAlpha: 0, duration: 0.3, delay: 0.2, onComplete: () => preloader.classList.add('is-done') });
       return;
@@ -76,7 +82,7 @@ export function initMotion({ orbit } = {}) {
     gsap.set(preloader, { clipPath: 'inset(0% 0% 0% 0%)' });
     gsap.timeline({
       delay: wait,
-      onComplete: () => { preloader.classList.add('is-done'); gsap.set(preloader, { clearProps: 'clipPath' }); },
+      onComplete: () => { preloader.classList.add('is-done'); gsap.set(preloader, { clearProps: 'clipPath' }); markSeen(); },
     })
       .add(() => { orbit && orbit.intro(); heroIntro(); lenis && lenis.start(); }, 0)
       .to(preloader, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.55, ease: 'power3.inOut' }, 0);
