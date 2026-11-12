@@ -21,9 +21,27 @@ const nearIO = new IntersectionObserver(entries => entries.forEach(e => {
 }), { rootMargin: '100% 0px' });
 $$('img[data-near-src]').forEach(img => nearIO.observe(img));
 
-/* ---- hero orbit (Phase 4) + preloader and scroll animations (Phase 5) ---- */
-const orbit = initOrbit();
-initMotion({ orbit }); // the preloader exit starts the orbit intro (line draws in, cards arrive)
+/* ---- hero orbit (Phase 4) + preloader and scroll animations (Phase 5) ----
+   The animation libraries are fetched and run only after the first frame is on screen: the CSS preloader
+   already covers the page, so nothing waits on them, and the first paint isn't held back by ~140 KB of script. */
+const VENDOR = ['js/vendor/gsap.min.js', 'js/vendor/ScrollTrigger.min.js', 'js/vendor/SplitText.min.js', 'js/vendor/lenis.min.js'];
+const loadScript = src => new Promise(res => {
+  const s = document.createElement('script');
+  s.src = src; s.async = false;          // keep execution order: gsap first, then its plugins
+  s.onload = s.onerror = res;            // on failure motion.js/orbit.js fall back to the static layout
+  document.head.appendChild(s);
+});
+const afterFirstPaint = () => new Promise(res => requestAnimationFrame(() => setTimeout(res, 0)));
+// the orbit posters are requested at the same moment (the cards stay hidden until the preloader lifts anyway)
+const loadPosters = () => $$('.ocard img[data-src]').forEach(img => {
+  img.srcset = img.dataset.srcset; img.src = img.dataset.src;
+});
+afterFirstPaint()
+  .then(() => { loadPosters(); return Promise.all(VENDOR.map(loadScript)); })
+  .then(() => {
+    const orbit = initOrbit();
+    initMotion({ orbit }); // the preloader exit starts the orbit intro (line draws in, cards arrive)
+  });
 
 /* ---- header: solid after scroll, hide on scroll down / show on scroll up ---- */
 const header = $('#header');
