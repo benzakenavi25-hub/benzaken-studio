@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 10 1050 980">
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="200" y1="62" x2="1000" y2="940">
+      <stop offset="0" stop-color="#EFD9B4"/><stop offset=".45" stop-color="#E0C49A"/><stop offset="1" stop-color="#A8875C"/>
+    </linearGradient>
+    <linearGradient id="s" gradientUnits="userSpaceOnUse" x1="75" y1="672" x2="660" y2="474">
+      <stop offset="0" stop-color="#A8875C"/><stop offset=".6" stop-color="#E0C49A"/><stop offset="1" stop-color="#F4E4C8"/>
+    </linearGradient>
+  </defs>
+  <rect x="20" y="10" width="1050" height="980" rx="190" fill="#0B0A09"/>
+  <g fill="url(#g)">
+    <path d="M185 62 L450 62 L450 937 L75 937 C205 934 322 934 338 878 L338 112 C334 74 285 65 185 62 Z"/>
+    <path d="M440 62 L650 62 C805 62 900 150 900 285 C900 395 825 452 655 472 C745 438 790 360 790 268 C790 150 735 77 620 77 L440 77 Z"/>
+    <path d="M440 477 L655 477 C860 477 1015 570 1015 702 C1015 842 880 937 700 937 L440 937 L440 925 L690 925 C792 925 866 830 866 702 C866 592 780 490 650 490 L440 490 Z"/>
+  </g>
+  <path fill="url(#s)" stroke="#0B0A09" stroke-opacity=".55" stroke-width="2.5" paint-order="stroke" d="M75 672 C262 586 442 506 662 473 C478 530 300 590 75 672 Z"/>
+</svg>

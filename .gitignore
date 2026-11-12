@@ -1,0 +1,26 @@
+# ---- private: prompts, copy source, tooling (never publish) ----
+studio-prompt.md
+studio-content.md
+scripts/
+package.json
+package-lock.json
+node_modules/
+tmp/
+.claude/
+
+# ---- source captures the site doesn't use (kept locally only) ----
+assets/logo/
+assets/work/*/scroll.mp4
+assets/work/*/desktop-*
+assets/work/*/mobile-*-390.webp
+assets/work/aura/mobile-hero-780.webp
+assets/work/aura/mobile-residences-780.webp
+assets/work/noa-arad/mobile-listings-780.webp
+assets/work/noa-arad/mobile-tour-780.webp
+assets/work/clips/_contact-sheet.png
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
