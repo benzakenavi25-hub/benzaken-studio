@@ -116,7 +116,7 @@ export function initMotion({ orbit } = {}) {
    no single long task, and each section's triggers are created after the pins above it exist, so their
    positions are right without a global refresh. Each step also switches on real layout for its section
    (until then the browser skips laying out off-screen sections: content-visibility in site.css). */
-const Q = { desk: '(min-width: 761px)', mob: '(max-width: 760px)', wide: '(min-width: 901px)' };
+const Q = { desk: '(min-width: 761px)', mob: '(max-width: 760px)', wide: '(min-width: 901px)', lg: '(min-width: 1024px)' };
 
 function inkFill(el) {
   // headings keep SplitText's aria-label; a <p> may not carry one, so its words are simply read in order
@@ -207,26 +207,85 @@ function caseStudy(cs, { mob, wide }) {
   gsap.fromTo(phone, { yPercent: 10 }, { yPercent: -10, ease: 'none', scrollTrigger: { trigger: cs, start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
+/* "The journey of a lead": 6 steps, each with a phone scene (HTML/CSS). A scene's own animation is pure CSS and
+   runs while it has .is-active; taking the class off resets it, so scrolling back replays it.
+   Desktop ≥1024: the stage pins for ~70vh of scroll per step; the active row is lit, a gold line tracks progress,
+   and all scenes move into the one large phone. Smaller screens: no pin, each scene plays while its phone is in view. */
+function journey(s, { mob, lg }) {
+  base(s, '.label, .lead, .journey__note', mob);
+  const stage = $('.journey__stage', s);
+  const rows = $$('.jstep', stage);
+  const scenes = rows.map(li => $('.jscene', li));
+  const video = $('.sc-site video', stage);
+  const onPlaying = () => video.classList.add('is-on');
+  video.addEventListener('playing', onPlaying);
+  ScrollTrigger.create({
+    trigger: s, start: 'top bottom+=100%', once: true,
+    onEnter: () => { if (!video.getAttribute('src')) { video.src = video.dataset.src; video.preload = 'auto'; } },
+  });
+  const show = (sc, on) => {
+    if (sc.classList.contains('is-active') === on) return;
+    sc.classList.toggle('is-active', on);
+    if (sc.contains(video)) {
+      if (on) { video.currentTime = 0; const p = video.play(); p && p.catch(() => {}); } else video.pause();
+    }
+  };
+  stage.classList.add('is-live');
+  const undo = () => {
+    scenes.forEach(sc => show(sc, false));
+    video.removeEventListener('playing', onPlaying);
+    stage.classList.remove('is-live', 'is-pinned');
+  };
+
+  if (!lg) {
+    scenes.forEach(sc => ScrollTrigger.create({
+      trigger: sc.closest('.jphone'), start: 'top 85%', end: 'bottom 15%',
+      onToggle: self => show(sc, self.isActive),
+    }));
+    return undo;
+  }
+
+  // desktop: move the scenes into the large phone and pin the stage
+  const screen = $('.journey__aside .jscreen', stage);
+  const homes = scenes.map(sc => sc.parentNode);
+  scenes.forEach(sc => screen.appendChild(sc));
+  stage.classList.add('is-pinned');
+  const fill = $('.jsteps__fill', stage);
+  let cur = 0, inView = false;
+  const apply = () => {
+    rows.forEach((li, k) => li.classList.toggle('is-active', k === cur));
+    scenes.forEach((sc, k) => show(sc, inView && k === cur));
+  };
+  apply();
+  ScrollTrigger.create({
+    trigger: stage, start: 'top top', end: () => '+=' + Math.round(window.innerHeight * 0.7 * rows.length),
+    pin: true, anticipatePin: 1, invalidateOnRefresh: true,
+    onUpdate: self => {
+      gsap.set(fill, { scaleY: self.progress });
+      const i = Math.min(rows.length - 1, Math.floor(self.progress * rows.length));
+      if (i !== cur) { cur = i; apply(); }
+    },
+  });
+  // the scene plays only while the stage is on screen (and replays when you come back to it)
+  ScrollTrigger.create({
+    trigger: s, start: 'top 60%', end: 'bottom 40%',
+    onToggle: self => { inView = self.isActive; apply(); },
+  });
+  return () => {
+    undo();
+    rows.forEach(li => li.classList.remove('is-active'));
+    scenes.forEach((sc, k) => homes[k].appendChild(sc));
+    gsap.set(fill, { clearProps: 'transform' });
+  };
+}
+
 const steps = [
   // selected work: heading, then one pinned case study per project
   ({ mob }) => { $('#work').classList.add('cv-on'); $$('.work__head .ink-text').forEach(inkFill); staticText($$('.work__head .label, .work__head .lead'), mob); },
   c => caseStudy($('#work-aura'), c),
   c => caseStudy($('#work-noa'), c),
-  // what you get: clip-path stagger, icons draw on enter
-  ({ mob }) => {
-    const s = $('#services');
-    base(s, '.label', mob);
-    const cards = $$('.card', s);
-    gsap.set(cards, { clipPath: 'inset(100% 0% 0% 0%)' });
-    gsap.set($$('.card__icon path', s), { strokeDasharray: 1, strokeDashoffset: 1 });
-    ScrollTrigger.batch(cards, {
-      start: 'top 88%', once: true,
-      onEnter: batch => {
-        gsap.to(batch, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.1, ease: 'power3.out', stagger: 0.12 });
-        gsap.to(batch.map(c => $('.card__icon path', c)), { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut', stagger: 0.12, delay: 0.35 });
-      },
-    });
-  },
+  // what you get: "the journey of a lead" scroll story
+  c => journey($('#services'), c),
   // about: line-by-line mask reveal + slow parallax on the outlined B
   ({ mob }) => {
     const about = $('#about');

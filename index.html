@@ -236,43 +236,174 @@
   </article>
 </section>
 
-<!-- ===== 4. what you get ===== -->
-<section class="section section--raised services" id="services" aria-labelledby="services-title">
-  <div class="wrap">
+<!-- ===== 4. what you get — the journey of a lead (scroll story) ===== -->
+<section class="section section--raised journey" id="services" aria-labelledby="services-title">
+  <div class="wrap journey__head">
     <p class="label">WHAT YOU GET</p>
     <h2 class="h2 ink-text" id="services-title">לא עוד אתר. מכונת לידים.</h2>
-    <ul class="cards">
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M24 4 L40 20 L24 44 L8 20 Z M8 20 H40 M24 4 V44 M17 20 L24 44 L31 20"/></svg>
-        <h3 class="card__title">עיצוב פרימיום מותאם אישית</h3>
-        <p>בלי תבניות. כל אתר נבנה סביב הפרויקט, הקהל והמותג שלכם.</p>
-      </li>
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M24 5 a19 19 0 1 0 .01 0 Z M20 16 L33 24 L20 32 Z"/></svg>
-        <h3 class="card__title">אנימציות שמספרות סיפור</h3>
-        <p>גלילה קולנועית שגורמת לקונה להרגיש את הנכס לפני שהגיע אליו.</p>
-      </li>
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M5 10 H43 V38 H5 Z M5 17 H43 M12 25 H26 M12 31 H21 M31 24 H37 V32 H31 Z"/></svg>
-        <h3 class="card__title">דף נחיתה לקמפיינים</h3>
-        <p>דף ממוקד לפרסום בפייסבוק, אינסטגרם וגוגל, שבנוי להשארת פרטים.</p>
-      </li>
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M15 4 H33 a3 3 0 0 1 3 3 V41 a3 3 0 0 1 -3 3 H15 a3 3 0 0 1 -3 -3 V7 a3 3 0 0 1 3 -3 Z M21 38 H27 M18 21 L23 26 L31 16"/></svg>
-        <h3 class="card__title">לידים ישר לטלפון</h3>
-        <p>כל פנייה מגיעה מיד לוואטסאפ, למייל או ל-CRM של צוות המכירות.</p>
-      </li>
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M5 42 H43 M9 35 L18 24 L26 30 L39 12 M31 12 H39 V20"/></svg>
-        <h3 class="card__title">מעקב פרסום מלא</h3>
-        <p>Meta Pixel ו-Google Analytics, כדי שתדעו בדיוק איזו מודעה מביאה קונים.</p>
-      </li>
-      <li class="card">
-        <svg class="card__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path pathLength="1" d="M15 4 H33 a3 3 0 0 1 3 3 V41 a3 3 0 0 1 -3 3 H15 a3 3 0 0 1 -3 -3 V7 a3 3 0 0 1 3 -3 Z M26 12 L19 25 H28 L22 36"/></svg>
-        <h3 class="card__title">מהיר, נגיש ומותאם לטלפון</h3>
-        <p>רוב הקונים מגיעים מהנייד. האתר נבנה קודם בשבילם, ועומד בתקן הנגישות.</p>
-      </li>
-    </ul>
+    <p class="lead">ככה עובד אתר שנבנה כדי למכור — צעד אחר צעד.</p>
+  </div>
+
+  <!-- Desktop (≥1024, motion on): the stage pins, one row is lit at a time and its scene plays in the phone.
+       Mobile / reduced motion / no JS: each step is a block with its own small phone below the text. -->
+  <div class="wrap journey__stage">
+    <div class="jsteps-wrap">
+      <span class="jsteps__line" aria-hidden="true"><span class="jsteps__fill"></span></span>
+      <ol class="jsteps">
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">01</span>
+            <h3 class="jstep__title">הקונה רואה מודעה</h3>
+            <p class="jstep__desc">דף נחיתה לקמפיינים.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-ad">
+              <div class="sc-ad__top">
+                <span class="sc-ad__avatar">N</span>
+                <span class="sc-ad__who"><b>noa.arad</b><span>ממומן</span></span>
+                <span class="sc-ad__more">•••</span>
+              </div>
+              <div class="sc-ad__img"><img src="assets/work/clips/noa-05-finale-480.webp" width="480" height="270" loading="lazy" decoding="async" alt=""></div>
+              <div class="sc-ad__cta"><span>לפרטים</span><span class="sc-ad__arrow">‹</span><span class="sc-tap"></span></div>
+              <div class="sc-ad__icons">
+                <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.5Z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M21 4 3 11l7 2.5L12.5 21 21 4Zm-11 9.5L21 4"/></svg>
+              </div>
+              <div class="sc-ad__cap"><b>noa.arad</b> וילה עם בריכה ברעננה · 6 חדרים · נכנסים לסיור</div>
+              <div class="sc-ad__nav">
+                <svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4z"/></svg>
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M12 8.5v7M8.5 12h7"/></svg>
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="m10.5 9.5 4 2.5-4 2.5z"/></svg>
+                <span class="sc-ad__me"></span>
+              </div>
+            </div>
+          </div></div>
+        </li>
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">02</span>
+            <h3 class="jstep__title">נכנס לאתר ונשאר</h3>
+            <p class="jstep__desc">עיצוב פרימיום ואנימציה שמספרת סיפור.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-site">
+              <span class="sc-site__url">noa-arad</span>
+              <div class="sc-site__view">
+                <img src="assets/work/clips/noa-01-door-hall-480.webp" width="480" height="270" loading="lazy" decoding="async" alt="">
+                <video muted playsinline loop preload="none" data-src="assets/work/clips/noa-01-door-hall.mp4" tabindex="-1"></video>
+              </div>
+            </div>
+          </div></div>
+        </li>
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">03</span>
+            <h3 class="jstep__title">הכל נטען מיד, גם בטלפון</h3>
+            <p class="jstep__desc">מהיר, נגיש ומותאם.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-speed">
+              <div class="sc-gauge">
+                <svg viewBox="0 0 120 120"><circle class="sc-gauge__track" cx="60" cy="60" r="52"/><circle class="sc-gauge__arc" cx="60" cy="60" r="52" pathLength="100"/></svg>
+                <span class="sc-gauge__num"></span>
+              </div>
+              <span class="sc-speed__label">ביצועים</span>
+              <span class="sc-speed__rows">
+                <span class="sc-speed__row">נטען מהר בנייד<i>✓</i></span>
+                <span class="sc-speed__row">נגישות<i>✓</i></span>
+                <span class="sc-speed__row">מותאם לכל מסך<i>✓</i></span>
+              </span>
+            </div>
+          </div></div>
+        </li>
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">04</span>
+            <h3 class="jstep__title">משאיר פרטים</h3>
+            <p class="jstep__desc">טופס קצר וברור, בלי חיכוך.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-form">
+              <div class="sc-form__card">
+                <span class="sc-form__title">רוצים לשמוע עוד?</span>
+                <span class="sc-form__sub">השאירו פרטים ונחזור אליכם היום</span>
+                <span class="sc-field"><span class="sc-field__l">שם</span><span class="sc-field__v"><span class="sc-type sc-type--name">דנה</span></span></span>
+                <span class="sc-field"><span class="sc-field__l">טלפון</span><span class="sc-field__v sc-field__v--ltr"><span class="sc-type sc-type--phone">050-•••-••12</span></span></span>
+                <span class="sc-field"><span class="sc-field__l">מה מחפשים?</span>
+                  <span class="sc-chips"><span>3 חדרים</span><span class="sc-chip--on">4 חדרים</span><span>5+</span></span></span>
+                <span class="sc-form__btn">שליחה<span class="sc-tap"></span></span>
+                <span class="sc-form__ok">✓ הפרטים נשלחו</span>
+              </div>
+            </div>
+          </div></div>
+        </li>
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">05</span>
+            <h3 class="jstep__title">הליד מגיע אליכם תוך שניות</h3>
+            <p class="jstep__desc">לידים ישר לטלפון.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-lock">
+              <span class="sc-lock__date">יום שלישי, 14 בינואר</span>
+              <span class="sc-lock__time">9:41</span>
+              <span class="sc-notes">
+                <span class="sc-note">
+                  <span class="sc-note__ic"><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.5Z"/></svg></span>
+                  <span class="sc-note__body"><span class="sc-note__head"><b>ליד חדש · דנה</b><span>לפני רגע</span></span><span>מתעניינת ב-4 חדרים</span></span>
+                </span>
+                <span class="sc-note sc-note--2">
+                  <span class="sc-note__ic"><svg viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.5Z"/></svg></span>
+                  <span class="sc-note__body"><span class="sc-note__head"><b>ליד חדש · אורי</b><span>לפני רגע</span></span><span>מבקש לתאם סיור בנכס</span></span>
+                </span>
+              </span>
+              <span class="sc-lock__dock"><i></i><i></i></span>
+            </div>
+          </div></div>
+        </li>
+
+        <li class="jstep">
+          <div class="jstep__text">
+            <span class="jstep__num en" aria-hidden="true">06</span>
+            <h3 class="jstep__title">ואתם יודעים מאיפה הוא הגיע</h3>
+            <p class="jstep__desc">מעקב פרסום מלא.</p>
+          </div>
+          <div class="jphone jphone--sm" aria-hidden="true"><div class="jscreen">
+            <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+            <div class="jscene sc-dash">
+              <span class="sc-dash__label">לידים לפי מודעה · 7 ימים</span>
+              <span class="sc-dash__total"><span class="sc-dash__num"></span> לידים</span>
+              <span class="sc-bars">
+                <span class="sc-bar" style="--h:.39"><span class="sc-bar__n">9</span><span class="sc-bar__col"></span><span class="sc-bar__k">מודעה <bdi>A</bdi></span></span>
+                <span class="sc-bar sc-bar--top" style="--h:1"><span class="sc-bar__n">23</span><span class="sc-bar__col"></span><span class="sc-bar__k">מודעה <bdi>B</bdi></span></span>
+                <span class="sc-bar" style="--h:.61"><span class="sc-bar__n">14</span><span class="sc-bar__col"></span><span class="sc-bar__k">מודעה <bdi>C</bdi></span></span>
+              </span>
+              <span class="sc-dash__win">מודעה <bdi>B</bdi> · 23 לידים · ₪41 לליד</span>
+            </div>
+          </div></div>
+        </li>
+
+      </ol>
+    </div>
+
+    <div class="journey__aside">
+      <div class="jphone jphone--lg" aria-hidden="true"><div class="jscreen">
+        <div class="jscreen__bar"><span>9:41</span><span class="jscreen__ic"><i></i><b></b></span></div>
+      </div></div>
+    </div>
+    <p class="journey__note">הדגמה להמחשה</p>
   </div>
 </section>
 

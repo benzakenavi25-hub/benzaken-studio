@@ -163,8 +163,6 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 }
 /* physical left: the page is RTL, and the LTR labels align left too */
 main > section:not(.hero):not(.contact) :is(p, h2, h3, .case__list li) { padding-left: var(--fab-lane); }
-/* inside boxes that already have their own side padding, only the remainder is needed (same specificity + .box, so it wins) */
-main > section:not(.hero):not(.contact) .card :is(p, h3) { padding-left: max(0px, calc(var(--fab-lane) - clamp(26px, 2.8vw, 44px))); }
 .wafab {
   position: fixed; inset-block-end: max(var(--fab-off), env(safe-area-inset-bottom)); inset-inline-end: var(--fab-off); z-index: 80;
   width: var(--fab-size); height: var(--fab-size); border-radius: 50%; background: var(--gold); color: var(--ink);
@@ -302,13 +300,210 @@ html.o3d .hero__hint {
 .phone__screen::after { content: ""; position: absolute; inset-block-start: 7px; inset-inline: 38%; height: 8px; border-radius: 8px; background: #000; }
 .phone__screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
 
-/* ================= what you get ================= */
-.services .h2 { margin-block: 22px clamp(48px, 6vw, 88px); text-wrap: balance; }
-.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
-.card { background: var(--ink-2); padding: clamp(32px, 3.4vw, 52px) clamp(26px, 2.8vw, 44px); display: grid; align-content: start; gap: 16px; }
-.card__icon { width: 52px; height: 52px; color: var(--gold); margin-block-end: 8px; }
-.card__title { font-family: var(--f-he-head); font-weight: 500; font-size: clamp(21px, 1.9vw, 27px); line-height: 1.25; }
-.card p { color: var(--sand); font-size: 16px; line-height: 1.7; }
+/* ================= what you get — "the journey of a lead" =================
+   Base (mobile, reduced motion, no JS): each step is a block — the text, then a small phone with its scene,
+   every scene in its final state. motion.js adds .is-live (scenes fade in + play their animation while
+   .is-active) and, on desktop ≥1024, .is-pinned: the stage pins, one row is lit at a time and the scenes
+   move into the single large phone. Scene sizes are in em off the phone width, so both phones share them. */
+.journey__head { display: grid; gap: 22px; }
+.journey__head .h2 { text-wrap: balance; }
+.journey__stage { position: relative; margin-block-start: clamp(56px, 7vw, 104px); }
+
+.jsteps { display: grid; gap: clamp(72px, 12vw, 120px); }
+.jstep { display: grid; gap: 30px; }
+.jstep__text { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: clamp(16px, 2vw, 28px); align-items: baseline; }
+.jstep__num { font-family: var(--f-en); font-weight: 500; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: .12em; color: var(--gold); line-height: 1; }
+.jstep__title { font-family: var(--f-he-head); font-weight: 300; font-size: clamp(28px, 3vw, 44px); line-height: 1.15; }
+.jstep__desc { grid-column: 2; color: var(--sand); font-weight: 300; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; margin-block-start: 6px; }
+.jsteps__line, .journey__aside { display: none; }
+.journey__note { margin-block-start: clamp(48px, 6vw, 80px); font-size: 13px; letter-spacing: .04em; color: var(--sand); opacity: .8; text-align: center; }
+
+/* the phone: thin dark bezel, 44px corners, a notch */
+.jphone {
+  position: relative; container-type: inline-size; aspect-ratio: 9 / 19.5; padding: 7px; border-radius: 44px;
+  background: #0a0908; border: 1px solid #2e2922;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, .55), 0 0 120px rgba(198, 162, 114, .07);
+}
+.jphone::after { content: ""; position: absolute; z-index: 6; top: 15px; left: 50%; width: 30%; aspect-ratio: 3.6; transform: translateX(-50%); border-radius: 99px; background: #000; }
+.jphone--sm { width: min(250px, 64vw); aspect-ratio: 9 / 18; border-radius: 38px; justify-self: center; }
+.jphone--sm::after { top: 13px; }
+.jscreen {
+  position: absolute; inset: 7px; overflow: hidden; border-radius: 37px; background: #0d0c0a; isolation: isolate;
+  font-family: var(--f-body); font-weight: 400; font-size: 5.2cqw; line-height: 1.4; color: var(--cream);
+}
+.jphone--sm .jscreen { border-radius: 31px; }
+.jscreen__bar {
+  position: absolute; z-index: 5; inset-inline: 0; inset-block-start: 0; height: 3em; padding-inline: 2em; direction: ltr;
+  display: flex; align-items: center; justify-content: space-between; font-size: .72em; font-weight: 500; letter-spacing: .02em;
+}
+.jscreen__ic { display: flex; align-items: center; gap: .4em; }
+.jscreen__ic i { width: 1.1em; height: .7em; background: linear-gradient(to right, currentColor 0 18%, transparent 18% 27%, currentColor 27% 45%, transparent 45% 55%, currentColor 55% 73%, transparent 73% 82%, currentColor 82%); clip-path: polygon(0 100%, 100% 0, 100% 100%); }
+.jscreen__ic b { width: 1.6em; height: .75em; border: 1px solid currentColor; border-radius: .22em; box-shadow: inset 0 0 0 1.5px #0d0c0a; background: currentColor; opacity: .9; }
+
+.jscene { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 3.6em 1.1em 1.4em; }
+
+/* 01 — the ad */
+.sc-ad { gap: .7em; background: #0f0e0c; }
+.sc-ad__top { display: flex; align-items: center; gap: .6em; }
+.sc-ad__avatar { flex: none; width: 2.1em; height: 2.1em; border-radius: 50%; display: grid; place-items: center; font: 500 .95em/1 var(--f-en); color: var(--ink); background: linear-gradient(135deg, var(--gold-2), #8d6c42); box-shadow: 0 0 0 2px #0f0e0c, 0 0 0 3px var(--gold); }
+.sc-ad__who { flex: 1; display: grid; line-height: 1.25; }
+.sc-ad__who b { font-weight: 500; font-size: .82em; unicode-bidi: isolate; }
+.sc-ad__who span { font-size: .66em; color: var(--sand); }
+.sc-ad__more { font-size: .55em; letter-spacing: .1em; color: var(--sand); }
+.sc-ad__img { margin-inline: -1.1em; aspect-ratio: 4 / 5; overflow: hidden; background: #1a1612; }
+.jphone--sm .sc-ad__img { aspect-ratio: 1; }
+.sc-ad__img img { width: 100%; height: 100%; object-fit: cover; object-position: 42% 50%; }
+.sc-ad__cta {
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between;
+  margin: -.7em -1.1em 0; padding: .55em 1.3em; background: var(--gold); color: var(--ink); font-size: .82em; font-weight: 500;
+}
+.sc-ad__cta > span:not(.sc-tap) { position: relative; z-index: 1; }
+.sc-ad__cta::after { content: ""; position: absolute; inset: 0; background: var(--gold-2); opacity: 0; }
+.sc-ad__arrow { font-size: 1.3em; line-height: 1; }
+.sc-tap { position: absolute; z-index: 2; inset-block-start: calc(50% - 1.6em); inset-inline-start: .6em; width: 3.2em; height: 3.2em; border-radius: 50%; background: rgba(255, 255, 255, .75); opacity: 0; pointer-events: none; }
+.sc-ad__icons { display: flex; gap: .9em; }
+.sc-ad__icons svg { width: 1.35em; height: 1.35em; fill: none; stroke: var(--cream); stroke-width: 1.6; stroke-linejoin: round; }
+.sc-ad__icons svg:first-child { fill: #E0675A; stroke: #E0675A; }
+.sc-ad__cap { font-size: .7em; line-height: 1.5; color: var(--sand); }
+.sc-ad__nav { display: flex; align-items: center; justify-content: space-between; margin: auto -1.1em -1.4em; padding: .7em 1.6em 1.3em; border-block-start: 1px solid rgba(242, 236, 226, .08); direction: ltr; }
+.sc-ad__nav svg { width: 1.35em; height: 1.35em; fill: none; stroke: var(--cream); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.sc-ad__me { width: 1.35em; height: 1.35em; border-radius: 50%; background: linear-gradient(135deg, var(--gold-2), #8d6c42); }
+.sc-ad__cap b { font-weight: 500; color: var(--cream); unicode-bidi: isolate; }
+
+/* 02 — the site (muted clip) */
+.sc-site { padding: 3.1em 0 0; background: #000; }
+.sc-site__url { align-self: center; margin-block-end: .55em; padding: .25em 1.6em; border-radius: 99px; background: rgba(242, 236, 226, .09); color: var(--sand); font-size: .66em; direction: ltr; }
+.sc-site__view { position: relative; flex: 1; overflow: hidden; }
+.sc-site__view img, .sc-site__view video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; }
+.sc-site__view video { opacity: 0; transition: opacity .5s; }
+.sc-site__view video.is-on { opacity: 1; }
+
+/* 03 — speed gauge */
+@property --sc-n { syntax: "<integer>"; inherits: false; initial-value: 0; }
+.sc-speed { align-items: center; justify-content: center; gap: .9em; background: radial-gradient(circle at 50% 40%, rgba(198, 162, 114, .13), transparent 62%), #0d0c0a; }
+.sc-gauge { position: relative; width: 64%; aspect-ratio: 1; }
+.sc-gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.sc-gauge circle { fill: none; stroke-width: 5; }
+.sc-gauge__track { stroke: rgba(198, 162, 114, .16); }
+.sc-gauge__arc { stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 5; }
+.sc-gauge__num { position: absolute; inset: 0; display: grid; place-items: center; font: 300 3.6em/1 var(--f-en); --sc-n: 95; counter-reset: sc var(--sc-n); }
+.sc-gauge__num::after { content: counter(sc); }
+.sc-speed__label { font-size: .8em; letter-spacing: .08em; color: var(--gold-2); }
+.sc-speed__rows { display: grid; width: 82%; margin-block-start: .4em; }
+.sc-speed__row { display: flex; justify-content: space-between; padding-block: .5em; border-block-end: 1px solid rgba(198, 162, 114, .16); font-size: .72em; color: var(--sand); }
+.sc-speed__row i { font-style: normal; color: var(--gold); }
+
+/* 04 — the form fills itself */
+.sc-form { justify-content: center; padding-inline: .9em; background: linear-gradient(#1b1814, #0d0c0a); }
+.sc-form__card { display: grid; gap: .8em; padding: 1.3em 1.1em; border-radius: 1.1em; background: var(--cream); color: var(--ink); box-shadow: 0 20px 40px rgba(0, 0, 0, .45); }
+.sc-form__title { font: 400 1.2em/1.2 var(--f-he-head); }
+.sc-form__sub { margin-block-start: -.55em; font-size: .68em; color: #5a5249; }
+.sc-field { display: grid; gap: .2em; }
+.sc-field__l { font-size: .62em; color: #6b6359; }
+.sc-field__v { display: block; min-height: 1.75em; padding-block-end: .1em; border-block-end: 1px solid rgba(11, 10, 9, .25); font-size: .9em; }
+.sc-field__v--ltr { direction: ltr; text-align: right; }
+.sc-type { display: inline-block; }
+.sc-chips { display: flex; flex-wrap: wrap; gap: .4em; padding-block-start: .15em; }
+.sc-chips span { padding: .3em .85em; border: 1px solid rgba(11, 10, 9, .22); border-radius: 99px; font-size: .66em; }
+.sc-chips .sc-chip--on { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+.sc-form__btn { position: relative; overflow: hidden; display: grid; place-items: center; height: 2.6em; margin-block-start: .2em; border-radius: .5em; background: var(--ink); color: var(--cream); font-size: .82em; font-weight: 500; }
+.sc-form__btn .sc-tap { inset-inline-start: calc(50% - 1.6em); background: rgba(198, 162, 114, .7); }
+.sc-form__ok { margin-block-start: -.2em; text-align: center; font-size: .68em; font-weight: 500; color: var(--gold-deep); }
+
+/* 05 — lock screen + lead notifications */
+.sc-lock { align-items: center; padding-block-start: 4.2em; background: radial-gradient(120% 70% at 50% 0%, #3b2d1e 0%, #17130f 55%, #0b0a09 100%); }
+.sc-lock__date { font-size: .74em; color: rgba(242, 236, 226, .75); }
+.sc-lock__time { margin-block-end: 1.1em; font: 300 4em/1 var(--f-body); letter-spacing: -.02em; direction: ltr; }
+.sc-notes { display: grid; gap: .5em; width: 100%; }
+.sc-note { display: flex; align-items: flex-start; gap: .6em; padding: .75em .8em; border-radius: 1.1em; background: rgba(48, 42, 35, .82); box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+.sc-note__ic { flex: none; display: grid; place-items: center; width: 2em; height: 2em; border-radius: .55em; background: #25D366; }
+.sc-note__ic svg { width: 1.2em; height: 1.2em; fill: #fff; }
+.sc-note__body { flex: 1; min-width: 0; display: grid; gap: .1em; font-size: .72em; line-height: 1.35; }
+.sc-note__head { display: flex; justify-content: space-between; gap: .5em; }
+.sc-note__head b { font-weight: 500; }
+.sc-note__head span { flex: none; font-size: .9em; opacity: .65; }
+.sc-lock__dock { display: flex; justify-content: space-between; width: 100%; margin-block-start: auto; padding-inline: .6em; }
+.sc-lock__dock i { width: 2.6em; height: 2.6em; border-radius: 50%; background: rgba(242, 236, 226, .12); }
+
+/* 06 — lead sources dashboard */
+.sc-dash { gap: .6em; padding-block-start: 3.8em; background: #0f0e0c; }
+.sc-dash__label { font-size: .7em; color: var(--sand); }
+.sc-dash__total { font: 300 1em/1.2 var(--f-he-head); color: var(--sand); }
+.sc-dash__num { font: 300 2.5em/1 var(--f-en); color: var(--cream); --sc-n: 46; counter-reset: sc var(--sc-n); }
+.sc-dash__num::after { content: counter(sc); }
+.sc-bars { flex: 1; min-height: 0; display: flex; align-items: stretch; gap: .9em; padding-block-start: .6em; }
+.sc-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: .3em; }
+.sc-bar__col { width: 100%; height: calc(var(--h) * 64%); border-radius: .35em .35em 0 0; background: rgba(198, 162, 114, .26); transform-origin: 50% 100%; }
+.sc-bar--top .sc-bar__col { background: linear-gradient(var(--gold-2), var(--gold)); }
+.sc-bar__n { font: 500 .85em/1 var(--f-body); }
+.sc-bar--top .sc-bar__n { color: var(--gold-2); }
+.sc-bar__k { font-size: .62em; color: var(--sand); }
+.sc-dash__win { padding: .65em .7em; border: 1px solid var(--gold); border-radius: .7em; background: rgba(198, 162, 114, .08); color: var(--gold-2); font-size: .7em; text-align: center; }
+
+/* live: scenes crossfade (old one out first, so they never overlap) and play while active.
+   Removing .is-active drops the animations, so the scene resets and replays next time. */
+.journey__stage.is-live .jscene { opacity: 0; visibility: hidden; transform: scale(.96); transition: opacity .28s ease, transform .28s ease, visibility 0s .28s; }
+.journey__stage.is-live .jscene.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity .55s var(--ease) .28s, transform .8s var(--ease) .28s, visibility 0s .28s; }
+.is-live .jscene.is-active :is(.sc-ad__top, .sc-ad__icons, .sc-ad__cap, .sc-site__url, .sc-speed__label, .sc-lock__date, .sc-lock__time, .sc-dash__label, .sc-dash__total) { animation: sc-in .6s var(--ease) .45s both; }
+.is-live .jscene.is-active .sc-ad__img img { animation: sc-zoom 2.4s var(--ease) .3s both; }
+.is-live .jscene.is-active .sc-ad__cta { animation: sc-press .45s ease 1.7s both; }
+.is-live .jscene.is-active .sc-ad__cta::after { animation: sc-flash .7s ease 1.7s both; }
+.is-live .jscene.is-active .sc-ad__cta .sc-tap { animation: sc-ripple .8s ease-out 1.7s both; }
+.is-live .jscene.is-active .sc-gauge__arc { animation: sc-arc 1.8s cubic-bezier(.2, .7, .2, 1) .5s both; }
+.is-live .jscene.is-active .sc-gauge__num { animation: sc-count 1.8s cubic-bezier(.2, .7, .2, 1) .5s both; }
+.is-live .jscene.is-active .sc-speed__row { animation: sc-in .5s var(--ease) both; }
+.is-live .jscene.is-active .sc-speed__row:nth-child(1) { animation-delay: 1.5s; }
+.is-live .jscene.is-active .sc-speed__row:nth-child(2) { animation-delay: 1.7s; }
+.is-live .jscene.is-active .sc-speed__row:nth-child(3) { animation-delay: 1.9s; }
+.is-live .jscene.is-active .sc-type--name { animation: sc-type-rtl .5s steps(3) .9s both; }
+.is-live .jscene.is-active .sc-type--phone { animation: sc-type-ltr 1.1s steps(12) 1.6s both; }
+.is-live .jscene.is-active .sc-chip--on { animation: sc-chip .25s ease 3s both; }
+.is-live .jscene.is-active .sc-form__btn { animation: sc-press .45s ease 3.5s both; }
+.is-live .jscene.is-active .sc-form__btn .sc-tap { animation: sc-ripple .8s ease-out 3.5s both; }
+.is-live .jscene.is-active .sc-form__ok { animation: sc-in .5s var(--ease) 3.95s both; }
+.is-live .jscene.is-active .sc-note { animation: sc-drop .75s cubic-bezier(.2, 1.25, .35, 1) 1s both; }
+.is-live .jscene.is-active .sc-note--2 { animation-delay: 2.2s; }
+.is-live .jscene.is-active .sc-bar__col { animation: sc-grow 1.1s cubic-bezier(.2, .8, .2, 1) .6s both; }
+.is-live .jscene.is-active .sc-bar:nth-child(2) .sc-bar__col { animation-delay: .75s; }
+.is-live .jscene.is-active .sc-bar:nth-child(3) .sc-bar__col { animation-delay: .9s; }
+.is-live .jscene.is-active :is(.sc-bar__n, .sc-bar__k) { animation: sc-in .4s var(--ease) 1.5s both; }
+.is-live .jscene.is-active .sc-dash__num { animation: sc-count 1.6s cubic-bezier(.2, .7, .2, 1) .6s both; }
+.is-live .jscene.is-active .sc-dash__win { animation: sc-in .6s var(--ease) 2s both; }
+@keyframes sc-in { from { opacity: 0; transform: translateY(.6em); } }
+@keyframes sc-zoom { from { transform: scale(1.14); } }
+@keyframes sc-press { 0%, 100% { transform: none; } 40% { transform: scale(.95); } }
+@keyframes sc-flash { 0%, 100% { opacity: 0; } 30% { opacity: 1; } }
+@keyframes sc-ripple { 0% { opacity: .75; transform: scale(0); } 100% { opacity: 0; transform: scale(2.6); } }
+@keyframes sc-arc { from { stroke-dashoffset: 100; } }
+@keyframes sc-count { from { --sc-n: 0; } }
+@keyframes sc-type-rtl { from { clip-path: inset(0 0 0 100%); } }
+@keyframes sc-type-ltr { from { clip-path: inset(0 100% 0 0); } }
+@keyframes sc-chip { from { background: transparent; border-color: rgba(11, 10, 9, .22); color: var(--ink); } }
+@keyframes sc-drop { from { opacity: 0; transform: translateY(-160%) scale(.96); } }
+@keyframes sc-grow { from { transform: scaleY(0); } }
+
+/* wide, not pinned (reduced motion / no JS): text and phone side by side */
+@media (min-width: 1024px) {
+  .jstep { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: clamp(40px, 6vw, 120px); }
+  .jphone--sm { width: 260px; }
+}
+/* desktop pinned scroll story */
+@media (min-width: 1024px) {
+  .journey__stage.is-pinned {
+    height: 100svh; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: minmax(0, 1fr) auto;
+    column-gap: clamp(40px, 6vw, 120px); align-items: center; padding-block: calc(var(--header-h) + 8px) 24px;
+  }
+  .is-pinned .jsteps-wrap { grid-row: 1 / span 2; position: relative; padding-inline-start: clamp(28px, 3vw, 48px); }
+  .is-pinned .jsteps__line { display: block; position: absolute; inset-block: 4px; inset-inline-start: 0; width: 1px; background: var(--line); }
+  .is-pinned .jsteps__fill { position: absolute; inset: 0; background: var(--gold); transform-origin: 50% 0; transform: scaleY(0); }
+  .is-pinned .jsteps { gap: clamp(14px, 2.8svh, 32px); }
+  .is-pinned .jstep { grid-template-columns: minmax(0, 1fr); opacity: .25; transition: opacity .5s var(--ease); }
+  .is-pinned .jstep.is-active { opacity: 1; }
+  .is-pinned .jstep .jphone--sm { display: none; }
+  .is-pinned .journey__aside { display: grid; place-items: center; grid-column: 2; grid-row: 1; min-height: 0; }
+  .is-pinned .jphone--lg { height: min(640px, calc(100svh - var(--header-h) - 100px)); width: auto; }
+  .is-pinned .journey__note { grid-column: 2; grid-row: 2; margin: 0; padding-block-start: 14px; }
+}
 
 /* ================= about ================= */
 .about { overflow: hidden; }
@@ -360,10 +555,6 @@ html.o3d .hero__hint {
 .footer__copy a:hover { color: var(--gold-2); }
 
 /* ================= responsive ================= */
-@media (max-width: 1000px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
-}
-
 @media (max-width: 900px) {
   :root { --header-h: 64px; }
   .logo--h { display: none; }
@@ -385,7 +576,6 @@ html.o3d .hero__hint {
 }
 
 @media (max-width: 760px) {
-  .cards { grid-template-columns: 1fr; }
   .phone { width: 30%; inset-inline-start: -2%; border-radius: 22px; padding: 5px; }
   .phone__screen { border-radius: 17px; }
   .case--flip .phone { inset-inline-end: -2%; }
