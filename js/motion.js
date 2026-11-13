@@ -210,7 +210,8 @@ function caseStudy(cs, { mob, wide }) {
 /* "The journey of a lead": 6 steps, each with a phone scene (HTML/CSS). A scene's own animation is pure CSS and
    runs while it has .is-active; taking the class off resets it, so scrolling back replays it.
    Desktop ≥1024: the stage pins for ~70vh of scroll per step; the active row is lit, a gold line tracks progress,
-   and all scenes move into the one large phone. Smaller screens: no pin, each scene plays while its phone is in view. */
+   and all scenes move into the one large phone. Smaller screens: the same single phone, held by CSS position: sticky
+   (no pin), with the active step's text under it and progress dots beside it. Reduced motion keeps the stacked version. */
 function journey(s, { mob, lg }) {
   base(s, '.label, .lead, .journey__note', mob);
   const stage = $('.journey__stage', s);
@@ -237,18 +238,47 @@ function journey(s, { mob, lg }) {
     stage.classList.remove('is-live', 'is-pinned');
   };
 
-  if (!lg) {
-    scenes.forEach(sc => ScrollTrigger.create({
-      trigger: sc.closest('.jphone'), start: 'top 85%', end: 'bottom 15%',
-      onToggle: self => show(sc, self.isActive),
-    }));
-    return undo;
-  }
-
-  // desktop: move the scenes into the large phone and pin the stage
   const screen = $('.journey__aside .jscreen', stage);
   const homes = scenes.map(sc => sc.parentNode);
   scenes.forEach(sc => screen.appendChild(sc));
+
+  if (!lg) {
+    // mobile / tablet: one CSS-sticky phone; invisible 60svh row markers set the active step
+    const cap = $('.journey__caption', stage);
+    const texts = rows.map(li => $('.jstep__text', li));
+    const dots = $$('.journey__dots i', stage);
+    texts.forEach(t => cap.appendChild(t));
+    stage.classList.add('is-sticky');
+    let cur = 0, inView = false;
+    const apply = () => {
+      texts.forEach((t, k) => t.classList.toggle('is-on', k === cur));
+      dots.forEach((d, k) => d.classList.toggle('is-on', k === cur));
+      scenes.forEach((sc, k) => show(sc, inView && k === cur));
+    };
+    apply();
+    // the block sticks at 12svh, so step k is active while its marker spans that line
+    rows.forEach((li, k) => ScrollTrigger.create({
+      trigger: li, start: 'top 12%', end: 'bottom 12%',
+      onToggle: self => { if (self.isActive && cur !== k) { cur = k; apply(); } },
+    }));
+    ScrollTrigger.create({
+      trigger: stage, start: 'top 75%', end: 'bottom 25%',
+      onToggle: self => { inView = self.isActive; apply(); },
+    });
+    ScrollTrigger.create({
+      trigger: stage, start: 'top bottom', end: 'bottom top',
+      onToggle: self => document.documentElement.classList.toggle('wafab-off', self.isActive),
+    });
+    return () => {
+      undo();
+      document.documentElement.classList.remove('wafab-off');
+      texts.forEach((t, k) => { t.classList.remove('is-on'); rows[k].prepend(t); });
+      dots.forEach(d => d.classList.remove('is-on'));
+      scenes.forEach((sc, k) => homes[k].appendChild(sc));
+    };
+  }
+
+  // desktop: the scenes live in the large phone and the stage pins
   stage.classList.add('is-pinned');
   const fill = $('.jsteps__fill', stage);
   let cur = 0, inView = false;
