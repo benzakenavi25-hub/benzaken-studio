@@ -96,16 +96,6 @@ const endIO = new IntersectionObserver(entries => {
 endIO.observe(contact);
 endIO.observe($('.footer'));
 
-/* ---- FAQ accordion (CSS grid-rows 0fr -> 1fr) ---- */
-$$('.qa').forEach(qa => {
-  const btn = $('.qa__btn', qa);
-  btn.addEventListener('click', () => {
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    qa.classList.toggle('is-open', !open);
-  });
-});
-
 /* ---- contact form -> WhatsApp (no backend) ---- */
 const form = $('#leadForm');
 const err = (id, msg) => { $('#' + id).textContent = msg; };

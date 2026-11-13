@@ -162,10 +162,9 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   --fab-lane: max(0px, calc(var(--fab-off) + var(--fab-size) + 12px - var(--inset)));
 }
 /* physical left: the page is RTL, and the LTR labels align left too */
-main > section:not(.hero):not(.contact) :is(p, h2, h3, .case__list li, .qa__btn) { padding-left: var(--fab-lane); }
+main > section:not(.hero):not(.contact) :is(p, h2, h3, .case__list li) { padding-left: var(--fab-lane); }
 /* inside boxes that already have their own side padding, only the remainder is needed (same specificity + .box, so it wins) */
 main > section:not(.hero):not(.contact) .card :is(p, h3) { padding-left: max(0px, calc(var(--fab-lane) - clamp(26px, 2.8vw, 44px))); }
-main > section:not(.hero):not(.contact) .price :is(p, h3) { padding-left: max(0px, calc(var(--fab-lane) - clamp(32px, 4vw, 60px))); }
 .wafab {
   position: fixed; inset-block-end: max(var(--fab-off), env(safe-area-inset-bottom)); inset-inline-end: var(--fab-off); z-index: 80;
   width: var(--fab-size); height: var(--fab-size); border-radius: 50%; background: var(--gold); color: var(--ink);
@@ -258,10 +257,6 @@ html.o3d .hero__hint {
   html.o3d .hero__ctas .btn { width: auto; min-width: 0; }
 }
 
-/* ================= statement ================= */
-.statement { padding-block: clamp(120px, 18vw, 280px); }
-.statement__text { font-family: var(--f-he-head); font-weight: 300; line-height: 1.16; letter-spacing: -.01em; font-size: clamp(34px, 6.4vw, 108px); text-wrap: balance; }
-
 /* ================= selected work ================= */
 .work { padding-block-end: 0; }
 .work__head { display: grid; gap: 22px; margin-block-end: clamp(40px, 6vw, 96px); }
@@ -315,31 +310,6 @@ html.o3d .hero__hint {
 .card__title { font-family: var(--f-he-head); font-weight: 500; font-size: clamp(21px, 1.9vw, 27px); line-height: 1.25; }
 .card p { color: var(--sand); font-size: 16px; line-height: 1.7; }
 
-/* ================= process (light) ================= */
-.process .h2 { margin-block: 22px clamp(56px, 7vw, 110px); max-width: 16ch; }
-.steps { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(24px, 3vw, 48px); }
-.steps::before { content: ""; position: absolute; inset-block-start: 6px; inset-inline: 0; height: 1px; background: rgba(122, 92, 51, .45); }
-.step { position: relative; padding-block-start: 52px; display: grid; align-content: start; gap: 10px; }
-.step__dot { position: absolute; inset-block-start: 0; inset-inline-start: 0; width: 13px; height: 13px; border-radius: 50%; background: var(--cream); border: 1px solid var(--gold-deep); }
-.step__num { justify-self: start; font-family: var(--f-en); font-weight: 300; font-size: 52px; line-height: 1; color: var(--gold-deep); }
-.step__title { font-family: var(--f-he-head); font-weight: 500; font-size: clamp(22px, 2vw, 28px); line-height: 1.2; }
-.step p { color: #4a443c; font-size: 16px; }
-.process__note { margin-block-start: clamp(56px, 7vw, 100px); padding-block-start: 32px; border-block-start: 1px solid var(--line-dark); font-family: var(--f-he-head); font-weight: 300; font-size: clamp(22px, 2.6vw, 38px); }
-
-/* ================= investment (light) ================= */
-.invest { padding-block-start: 0; }
-.invest .wrap { border-block-start: 1px solid var(--line-dark); padding-block-start: clamp(88px, 13vw, 200px); }
-.invest .h2 { margin-block: 22px clamp(48px, 6vw, 88px); }
-.prices { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 40px); }
-.price { border: 1px solid var(--line-dark); background: rgba(255, 255, 255, .35); padding: clamp(32px, 4vw, 60px); display: grid; gap: 18px; align-content: start; }
-.price__name { font-family: var(--f-he-head); font-weight: 500; font-size: clamp(24px, 2.4vw, 32px); }
-.price__amount { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; }
-.price__from { font-size: 16px; color: #4a443c; }
-.price__num { font-family: var(--f-en); font-weight: 300; font-size: clamp(76px, 9vw, 150px); line-height: .95; color: var(--ink); }
-.price__cur { font-size: 24px; color: var(--gold-deep); font-weight: 400; }
-.price__desc { color: #4a443c; max-width: 34ch; }
-.invest__note { margin-block-start: clamp(44px, 6vw, 84px); text-align: center; font-family: var(--f-he-head); font-weight: 300; font-size: clamp(24px, 3.2vw, 48px); line-height: 1.3; text-wrap: balance; }
-
 /* ================= about ================= */
 .about { overflow: hidden; }
 .about__bg {
@@ -349,23 +319,8 @@ html.o3d .hero__hint {
 }
 .about__grid { position: relative; z-index: 1; display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
 .about__grid .h2 { margin-block-start: 22px; }
+.rv-word { --glow: 0; color: color-mix(in srgb, var(--gold) calc(var(--glow) * 100%), var(--cream)); }
 .about__text { display: grid; gap: 1.1em; font-family: var(--f-he-head); font-weight: 300; font-size: clamp(22px, 2.4vw, 35px); line-height: 1.5; padding-block-start: 30px; }
-
-/* ================= FAQ ================= */
-.faq__grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
-.faq__grid .h2 { margin-block-start: 22px; font-size: clamp(38px, 5.4vw, 88px); }
-.qa { border-block-end: 1px solid var(--line); }
-.qa:first-child { border-block-start: 1px solid var(--line); }
-.qa__btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 28px; text-align: start; font-family: var(--f-he-head); font-weight: 300; font-size: clamp(20px, 2.1vw, 30px); line-height: 1.3; transition: color .3s; }
-.qa__btn:hover { color: var(--gold-2); }
-.qa__icon { position: relative; flex: none; width: 18px; height: 18px; }
-.qa__icon::before, .qa__icon::after { content: ""; position: absolute; background: var(--gold); inset-inline: 0; inset-block-start: 8.5px; height: 1px; transition: transform .5s var(--ease); }
-.qa__icon::after { transform: rotate(90deg); }
-.qa.is-open .qa__icon::after { transform: rotate(0); }
-.qa__panel { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .55s var(--ease), visibility 0s .55s; }
-.qa__panel > div { overflow: hidden; min-height: 0; }
-.qa__panel p { color: var(--sand); padding-block-end: 30px; max-width: 54ch; }
-.qa.is-open .qa__panel { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .55s var(--ease), visibility 0s; }
 
 /* ================= contact ================= */
 .contact { padding-block-end: clamp(80px, 10vw, 140px); }
@@ -407,12 +362,6 @@ html.o3d .hero__hint {
 /* ================= responsive ================= */
 @media (max-width: 1000px) {
   .cards { grid-template-columns: repeat(2, 1fr); }
-  .steps { grid-template-columns: 1fr; gap: 0; }
-  .steps::before { inset-block: 6px 0; inset-inline: auto; inset-inline-start: 6px; width: 1px; height: auto; }
-  .step { padding-block: 0 44px; padding-inline-start: 46px; }
-  .step:last-child { padding-block-end: 0; }
-  .step__dot { inset-block-start: 8px; }
-  .prices { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
@@ -431,7 +380,7 @@ html.o3d .hero__hint {
 
   .case__grid, .case--flip .case__grid { grid-template-columns: 1fr; }
   .case__device, .case--flip .case__device { order: -1; padding-inline: 4%; padding-block-end: 12%; }
-  .about__grid, .faq__grid, .contact__grid { grid-template-columns: 1fr; }
+  .about__grid, .contact__grid { grid-template-columns: 1fr; }
   .about__bg { inset-inline-end: -30%; opacity: .7; }
 }
 
@@ -457,30 +406,8 @@ html.lenis { scroll-behavior: auto; }
 /* preloader: JS animates the draw + curtain; without GSAP it just fades (.is-done) */
 .preloader__mono { overflow: visible; }
 
-/* process: background arrives ink -> cream, gold line draws, dots light up */
-.process > .bgfade { position: absolute; inset: 0; z-index: 0; background: var(--ink); opacity: 0; pointer-events: none; }
-.process > .wrap { position: relative; z-index: 1; }
-.steps::after {
-  content: ""; position: absolute; inset-block-start: 6px; inset-inline: 0; height: 1px; background: var(--gold);
-  transform: scaleX(var(--fill, 1)); transform-origin: right center;
-}
-.step__dot { overflow: hidden; }
-.step__dot::after { content: ""; position: absolute; inset: 2px; border-radius: 50%; background: var(--gold); transition: transform .5s var(--ease); }
-.steps.is-anim .step:not(.is-lit) .step__dot::after { transform: scale(0); }
-@media (max-width: 1000px) {
-  .steps::after { inset-block: 6px 0; inset-inline: auto; inset-inline-start: 6px; width: 1px; height: auto; transform: scaleY(var(--fill, 1)); transform-origin: center top; }
-}
-
 /* masks used by SplitText */
-.hero__title .word-mask, .about__text .line-mask { padding-block: .08em; margin-block: -.08em; }
-
-/* Phase 6 — narrow phones: both price cards share one tidy layout
-   ("החל מ-" on its own line, then the number + currency). Kept last so it overrides the base flex. */
-@media (max-width: 420px) {
-  .price__amount { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 2px 10px; }
-  .price__from { grid-column: 1 / -1; }
-  .price__num { font-size: 66px; }
-}
+.hero__title .word-mask { padding-block: .08em; margin-block: -.08em; }
 
 /* Phase 7 — the preloader draw runs in CSS from first paint (GSAP only does the curtain exit at 0.9s; total ~1.35s) */
 html.o3d .pl-b { stroke-dasharray: 1; stroke-dashoffset: 1; fill-opacity: 0; animation: pl-draw .6s cubic-bezier(.45, 0, .55, 1) forwards, pl-fill .35s .4s ease-out forwards; }

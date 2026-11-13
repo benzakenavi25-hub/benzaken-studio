@@ -121,10 +121,9 @@ const Q = { desk: '(min-width: 761px)', mob: '(max-width: 760px)', wide: '(min-w
 function inkFill(el) {
   // headings keep SplitText's aria-label; a <p> may not carry one, so its words are simply read in order
   const split = new SplitText(el, { type: 'words', wordsClass: 'ink-word', aria: el.tagName === 'P' ? 'none' : 'auto' });
-  const big = el.classList.contains('statement__text');
   gsap.fromTo(split.words, { opacity: 0.15 }, {
     opacity: 1, ease: 'none', stagger: 0.1,
-    scrollTrigger: { trigger: el, start: big ? 'top 80%' : 'top 88%', end: big ? 'bottom 45%' : 'bottom 55%', scrub: true },
+    scrollTrigger: { trigger: el, start: 'top 88%', end: 'bottom 55%', scrub: true },
   });
 }
 
@@ -133,6 +132,26 @@ function staticText(els, mob) {
   const from = mob ? { opacity: 0, y: 16 } : { opacity: 0, y: 16, filter: 'blur(6px)' };
   const to = mob ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, filter: 'blur(0px)' };
   els.forEach(el => gsap.fromTo(el, from, { ...to, ease: 'none', scrollTrigger: { trigger: el, start: 'top 95%', end: 'top 65%', scrub: true } }));
+}
+
+// about paragraphs: scrubbed word-by-word reveal. Each word rises 0.12 -> 1 opacity, blur 4px -> 0 (desktop only)
+// and flashes gold (--glow 0 -> 1 -> 0, mixed with color-mix in CSS) on the way. The wave is a small stagger;
+// it starts at paragraph top = 85% of the viewport and is complete at paragraph bottom = 55%. No transforms.
+function wordReveal(p, mob) {
+  // aria 'auto': aria-label with the full text on <p>, the split spans get aria-hidden
+  p.setAttribute('role', 'group');
+  const split = new SplitText(p, { type: 'words', wordsClass: 'rv-word', aria: 'auto' });
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: { trigger: p, start: 'top 85%', end: 'bottom 55%', scrub: true },
+  });
+  split.words.forEach((w, i) => {
+    const at = i * 0.3;
+    tl.fromTo(w, mob ? { opacity: 0.12 } : { opacity: 0.12, filter: 'blur(4px)' },
+      mob ? { opacity: 1, duration: 1 } : { opacity: 1, filter: 'blur(0px)', duration: 1 }, at);
+    tl.fromTo(w, { '--glow': 0 }, { '--glow': 1, duration: 0.45, ease: 'power1.out' }, at)
+      .to(w, { '--glow': 0, duration: 0.55, ease: 'power1.in' }, at + 0.45);
+  });
 }
 
 // the common part of every section: real layout on, heading ink fill, static text
@@ -189,8 +208,6 @@ function caseStudy(cs, { mob, wide }) {
 }
 
 const steps = [
-  // statement
-  ({ mob }) => base($('#statement'), null, mob),
   // selected work: heading, then one pinned case study per project
   ({ mob }) => { $('#work').classList.add('cv-on'); $$('.work__head .ink-text').forEach(inkFill); staticText($$('.work__head .label, .work__head .lead'), mob); },
   c => caseStudy($('#work-aura'), c),
@@ -210,65 +227,13 @@ const steps = [
       },
     });
   },
-  // process: ink -> cream, the line draws, dots light when it reaches them
-  ({ mob }) => {
-    const process = $('#process');
-    base(process, '.label, .step__title, .step p, .step__num, .process__note', mob);
-    gsap.fromTo($('.bgfade', process), { opacity: 1 }, { opacity: 0, ease: 'none', scrollTrigger: { trigger: process, start: 'top bottom', end: 'top 35%', scrub: true } });
-    const line = $('.steps', process);
-    const stepEls = $$('.step', line);
-    line.classList.add('is-anim');
-    line.style.setProperty('--fill', 0);
-    let stops = [];
-    const measure = () => {
-      const r = line.getBoundingClientRect();
-      const vertical = window.innerWidth <= 1000;
-      stops = stepEls.map(s => {
-        const d = $('.step__dot', s).getBoundingClientRect();
-        return vertical ? (d.top + d.height / 2 - r.top) / r.height : (r.right - (d.left + d.width / 2)) / r.width;   // RTL: line starts at the right
-      });
-    };
-    ScrollTrigger.create({
-      trigger: line, start: 'top 75%', end: 'bottom 55%', scrub: true,
-      onRefresh: measure,
-      onUpdate: self => {
-        line.style.setProperty('--fill', self.progress.toFixed(4));
-        stepEls.forEach((s, i) => s.classList.toggle('is-lit', self.progress >= stops[i] - 0.005));
-      },
-    });
-    return () => { line.classList.remove('is-anim'); line.style.removeProperty('--fill'); };
-  },
-  // investment: numbers count up once
-  ({ mob }) => {
-    base($('#pricing'), '.label, .price__name, .price__amount, .price__desc, .invest__note', mob);
-    $$('#pricing .price__num').forEach(el => {
-      const end = +el.dataset.count;
-      const fmt = v => Math.round(v).toLocaleString('en-US');
-      const o = { v: 0 };
-      el.textContent = fmt(0);
-      ScrollTrigger.create({
-        trigger: el, start: 'top 85%', once: true,
-        onEnter: () => gsap.to(o, { v: end, duration: 1.8, ease: 'power3.out', onUpdate: () => { el.textContent = fmt(o.v); } }),
-      });
-    });
-    return () => $$('#pricing .price__num').forEach(el => { el.textContent = (+el.dataset.count).toLocaleString('en-US'); });
-  },
   // about: line-by-line mask reveal + slow parallax on the outlined B
   ({ mob }) => {
     const about = $('#about');
     base(about, '.label', mob);
-    $$('.about__text p', about).forEach(p => {
-      SplitText.create(p, {
-        type: 'lines', mask: 'lines', linesClass: 'line', maskClass: 'line-mask', autoSplit: true, aria: 'none',
-        onSplit: self => gsap.fromTo(self.lines, { yPercent: 105 }, {
-          yPercent: 0, duration: 1.1, ease: 'power4.out', stagger: 0.1,
-          scrollTrigger: { trigger: p, start: 'top 85%', once: true },
-        }),
-      });
-    });
+    $$('.about__text p', about).forEach(p => wordReveal(p, mob));
     gsap.fromTo('.about__bg', { yPercent: -40 }, { yPercent: -60, ease: 'none', scrollTrigger: { trigger: about, start: 'top bottom', end: 'bottom top', scrub: true } });
   },
-  ({ mob }) => base($('#faq'), '.label, .qa', mob),
   ({ mob }) => base($('#contact'), '.contact__links li, .form', mob),
   ({ mob }) => base($('.footer'), '.footer__inner > *', mob),
 ];
