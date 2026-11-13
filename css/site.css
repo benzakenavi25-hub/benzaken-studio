@@ -253,6 +253,8 @@ html.o3d .hero__hint {
   html.o3d .hero__lower .hero__sub { font-size: 16px; margin-block-end: 18px; max-width: 34ch; }
   html.o3d .hero__ctas { gap: 10px; }
   html.o3d .hero__ctas .btn { width: auto; min-width: 0; }
+  /* the unrolled pair ends the hero as two large stacked cards; the work heading follows right after them */
+  html.o3d .work { padding-block-start: 24px; }
 }
 
 /* ================= selected work ================= */
@@ -492,16 +494,21 @@ html.o3d .hero__hint {
    60svh markers that drive the active step. The stage is exactly tall enough for 6 × 60svh of travel. */
 .journey__dots, .journey__caption { display: none; }
 @media (max-width: 1023px) {
-  .journey__stage.is-sticky { --jstep-h: 60svh; --jblock-h: 76svh; height: calc(var(--jstep-h) * 6 + var(--jblock-h)); }
+  .journey__stage.is-sticky {
+    --jstep-h: 60svh;
+    --jphone-h: min(60svh, calc(100svh - 236px));   /* shrinks on short screens so the step text always fits */
+    --jblock-h: calc(var(--jphone-h) + 120px);       /* phone + gap + number/title/line (2-line title fits) */
+    height: calc(var(--jstep-h) * 6 + var(--jblock-h));
+  }
   .is-sticky .jsteps-wrap { position: absolute; inset-inline: 0; inset-block-start: 0; visibility: hidden; pointer-events: none; }
   .is-sticky .jsteps { gap: 0; }
   .is-sticky .jstep { display: block; height: var(--jstep-h); }
   .is-sticky .jstep > * { display: none; }
   .is-sticky .journey__aside {
-    position: sticky; inset-block-start: 12svh; height: var(--jblock-h);
+    position: sticky; inset-block-start: max(var(--header-h), calc((100svh - var(--jblock-h)) / 2)); height: var(--jblock-h);
     display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; align-content: start; row-gap: clamp(14px, 2.4svh, 24px);
   }
-  .is-sticky .jphone--lg { grid-column: 2; grid-row: 1; height: min(52svh, calc(var(--jblock-h) - 172px)); width: auto; padding: 5px; border-radius: 30px; }
+  .is-sticky .jphone--lg { grid-column: 2; grid-row: 1; height: var(--jphone-h); width: auto; padding: 5px; border-radius: 30px; }
   .is-sticky .jphone--lg .jscreen { inset: 5px; border-radius: 25px; }
   .is-sticky .jphone--lg::after { top: 9px; }
   .is-sticky .journey__dots { grid-column: 3; grid-row: 1; align-self: center; justify-self: start; margin-inline-start: clamp(14px, 4vw, 26px); display: grid; gap: 10px; }
@@ -515,6 +522,11 @@ html.o3d .hero__hint {
   .journey__stage.is-sticky .journey__caption :is(h3, p) { padding-left: 0; }
   .is-sticky .journey__note { position: absolute; inset-inline: 0; inset-block-start: 100%; margin: 0; padding-block-start: 8px; }
 }
+/* the ending beat after step 06 */
+.journey__end { display: grid; justify-items: center; gap: 30px; margin-block-start: clamp(96px, 12vw, 160px); text-align: center; }
+.journey__end-line { font-family: var(--f-he-head); font-weight: 300; font-size: clamp(32px, 4.6vw, 72px); line-height: 1.1; text-wrap: balance; }
+.journey .journey__end .journey__end-line { padding-left: 0; } /* centred, and the floating button lane would push it off-centre */
+
 /* the floating WhatsApp button stays out of the sticky phone story */
 html.wafab-off .wafab.is-on { opacity: 0; visibility: hidden; transform: translateY(14px); }
 
@@ -580,7 +592,6 @@ html.wafab-off .wafab.is-on { opacity: 0; visibility: hidden; transform: transla
 .footer { border-block-start: 1px solid var(--line); padding-block: 72px 36px; text-align: center; }
 .footer__inner { display: grid; justify-items: center; gap: 22px; }
 .footer__logo { width: min(260px, 64vw); height: auto; }
-.footer__tag { font-size: 11px; }
 .footer__copy { font-size: 14px; color: var(--sand); }
 .footer__copy a { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); }
 .footer__copy a:hover { color: var(--gold-2); }

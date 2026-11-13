@@ -95,9 +95,12 @@ export function initOrbit() {
       G.fScale = mobile
         ? Math.min((G.vw - 2 * gut) / G.W, (G.vh * 0.62 - G.gap) / 2 / G.H)   // stacked pair: full width, fits the screen
         : Math.min(1.9, ((G.vw - 2 * gut - G.gap) / 2) / G.W);
+      // phones: the stacked pair sits at the bottom of the hero, so it hands straight over to the work heading
+      G.stackY = mobile ? Math.max(0, G.vh - 32 - (G.H * G.fScale + G.gap / 2) - G.cy) : 0;
       G.tw = title.offsetWidth; G.th = title.offsetHeight;
-      // the headline sits above the orbit plane, so only its lower part is crossed by the front cards
-      G.ty0 = -(G.th / 2) - G.H * (mobile ? 0.6 : 0.05);
+      // the headline sits above the orbit plane, clear of the front cards (which project ~0.15·H above the centre)
+      // so it is always fully readable; back cards still pass behind it
+      G.ty0 = -(G.th / 2) - G.H * (mobile ? 0.6 : 0.42);
       G.degPerPx = 57.3 / G.Rx;
       orbitEl.style.perspective = G.D + 'px';
       orbitEl.style.perspectiveOrigin = `${G.cx}px ${G.cy}px`;
@@ -151,7 +154,7 @@ export function initOrbit() {
           // phones: two cards can't grow side by side, so they stack (AURA on top) at full content width
           const hf = G.H * G.fScale;
           const ty = [-(hf / 2 + G.gap / 2), hf / 2 + G.gap / 2];
-          feats.forEach((c, k) => { c.x = lerp(c.x, 0, fe); c.y = lerp(c.y, ty[k], fe); c.sc = lerp(c.sc, G.fScale, fe); });
+          feats.forEach((c, k) => { c.x = lerp(c.x, 0, fe); c.y = lerp(c.y, ty[k] + G.stackY, fe); c.sc = lerp(c.sc, G.fScale, fe); });
         } else {
           const [f0, f1] = feats[0].x <= feats[1].x ? feats : [feats[1], feats[0]];
           const wf = G.W * G.fScale;
@@ -197,7 +200,7 @@ export function initOrbit() {
       const scLine = lerp(G.rowScale, G.fScale, fe);
       const yo = G.H / 2 + 12;
       const yr = G.stack
-        ? lerp((G.H * G.rowScale) / 2 + 26, G.H * G.fScale + G.gap / 2 + 26, fe)   // under the lower stacked card
+        ? lerp((G.H * G.rowScale) / 2 + 26, G.H * G.fScale + G.gap / 2 + 18 + G.stackY, fe)   // under the lower stacked card
         : (G.H * scLine) / 2 + 26;
       let d = '';
       for (let k = 0; k <= 120; k++) {
@@ -260,7 +263,12 @@ export function initOrbit() {
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
       if (!visible) cards.forEach(stop);
+      else render(0, true);   // coming back into view: draw the current scroll state right away
     }, { threshold: 0 });
+    // after any refresh (resize, fonts, sections below built) redraw from the timeline's current progress,
+    // so the hero is right whatever the scroll position was when the page loaded
+    const onRefresh = () => render(0, true);
+    ScrollTrigger.addEventListener('refresh', onRefresh);
     io.observe(hero);
 
     /* ---------- drag (momentum; horizontal only on touch) ---------- */
@@ -347,11 +355,11 @@ export function initOrbit() {
     };
     orbitEl.addEventListener('keydown', onKey);
 
-    /* ---------- scroll: pin + unroll ---------- */
+    /* ---------- scroll: pin + unroll (phones: a shorter hold on the final stacked pair) ---------- */
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: hero, start: 'top top', end: '+=120%', pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
+        trigger: hero, start: 'top top', end: mobile ? '+=95%' : '+=120%', pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true,
       },
     });
     tl.to(S, { lo: 1, duration: 0.22 }, 0)
@@ -379,6 +387,7 @@ export function initOrbit() {
     return () => {   // matchMedia cleanup (breakpoint change)
       gsap.ticker.remove(tick);
       ro.disconnect(); io.disconnect();
+      ScrollTrigger.removeEventListener('refresh', onRefresh);
       cards.forEach((c, k) => {
         stop(c);
         c.vid.removeEventListener('playing', onPlaying);

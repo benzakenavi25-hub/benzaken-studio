@@ -9,6 +9,11 @@ const waUrl = (text = WA_DEFAULT_TEXT) => `https://wa.me/${WA_NUMBER}?text=${enc
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
+/* ---- always start at the top on load/reload (history.scrollRestoration is 'manual', set in <head>):
+   the hero pin and the scroll animations are built for a page that starts at the top.
+   An explicit #hash (e.g. a shared link to #contact) still works. ---- */
+if (!location.hash) window.scrollTo(0, 0);
+
 /* ---- WhatsApp links ---- */
 $$('[data-wa]').forEach(a => { a.href = waUrl(); });
 

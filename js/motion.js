@@ -19,6 +19,7 @@ export function initMotion({ orbit } = {}) {
   }
 
   gsap.registerPlugin(ScrollTrigger, SplitText);
+  ScrollTrigger.clearScrollMemory('manual');   // ScrollTrigger must not restore an old scroll position either
 
   /* ---------------- Lenis ---------------- */
   let lenis = null;
@@ -213,7 +214,7 @@ function caseStudy(cs, { mob, wide }) {
    and all scenes move into the one large phone. Smaller screens: the same single phone, held by CSS position: sticky
    (no pin), with the active step's text under it and progress dots beside it. Reduced motion keeps the stacked version. */
 function journey(s, { mob, lg }) {
-  base(s, '.label, .lead, .journey__note', mob);
+  base(s, '.label, .lead, .journey__note, .journey__end .btn', mob);
   const stage = $('.journey__stage', s);
   const rows = $$('.jstep', stage);
   const scenes = rows.map(li => $('.jscene', li));
@@ -235,7 +236,7 @@ function journey(s, { mob, lg }) {
   const undo = () => {
     scenes.forEach(sc => show(sc, false));
     video.removeEventListener('playing', onPlaying);
-    stage.classList.remove('is-live', 'is-pinned');
+    stage.classList.remove('is-live', 'is-pinned', 'is-sticky');
   };
 
   const screen = $('.journey__aside .jscreen', stage);
@@ -256,9 +257,10 @@ function journey(s, { mob, lg }) {
       scenes.forEach((sc, k) => show(sc, inView && k === cur));
     };
     apply();
-    // the block sticks at 12svh, so step k is active while its marker spans that line
+    // step k is active while its marker spans the line where the block sticks (vertically centred, see site.css)
+    const stickY = () => parseFloat(getComputedStyle($('.journey__aside', stage)).top) || 0;
     rows.forEach((li, k) => ScrollTrigger.create({
-      trigger: li, start: 'top 12%', end: 'bottom 12%',
+      trigger: li, start: () => `top ${stickY()}px`, end: () => `bottom ${stickY()}px`,
       onToggle: self => { if (self.isActive && cur !== k) { cur = k; apply(); } },
     }));
     ScrollTrigger.create({
